@@ -1,0 +1,22 @@
+param SEATS; #number of seats
+param TIMESLOTS; #time
+param ORIGIN;
+param DESTINATION;
+param AIRTIME;
+param TIME; #sum {j in 1..FLIGHTS} AIRTIME[j]; #total time elapsed = sum of airtimes
+param PASSENGERS;
+
+var x {i in 1..ORIGIN, j in 1..DESTINATION, t in 0..TIMESLOTS} binary; #x[i,j,t]=1 if plane travels from i to j at timeslot t
+#var landed {j in 0..TIMESLOTS}; #finishing time of flight j
+
+maximize profit: #number of filled seats*flytime*if flight occured
+	sum {i in 1..ORIGIN, j in 1..DESTINATION, t in 0..TIMESLOTS} PASSENGERS[i,j]*AIRTIME[i,j]*x[i,j,t];
+
+subject to maxflights: #cannot take more flights than timeslots
+    sum {i in 1..ORIGIN, j in 1..DESTINATION, t in 0..TIMESLOTS} x[i,j,t] <= TIMESLOTS;
+
+subject to time: #cannot exceed deadline
+   	TIME >= sum {i in 1..ORIGIN, j in 1..DESTINATION, t in 0..TIMESLOTS} x[i,j,t]*AIRTIME[i,j];
+
+subject to origin {i in 1..ORIGIN, j in 1..DESTINATION, t in 0..TIMESLOTS}: #next flight must leave from previous destination #needs fixing 
+	x[i,j,t] - x[j,i,t+1] = 0; 
