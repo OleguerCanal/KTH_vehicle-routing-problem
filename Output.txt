@@ -1,0 +1,81 @@
+Problem:    Model
+Rows:       21
+Columns:    27 (27 integer, 27 binary)
+Non-zeros:  153
+Status:     INTEGER OPTIMAL
+Objective:  profit = 230 (MAXimum)
+
+   No.   Row name        Activity     Lower bound   Upper bound
+------ ------------    ------------- ------------- -------------
+     1 profit                    230                             
+     2 maxflights                  3                           3 
+     3 time                       15                          24 
+     4 origin[1,1]                 0            -0             = 
+     5 origin[1,2]                 0            -0             = 
+     6 origin[2,1]                 0            -0             = 
+     7 origin[2,2]                 0            -0             = 
+     8 origin[3,1]                 0            -0             = 
+     9 origin[3,2]                 0            -0             = 
+    10 oneflight[1]                1                           1 
+    11 oneflight[2]                1                           1 
+    12 oneflight[3]                1                           1 
+    13 norepeats[1,1]
+                                   0                           1 
+    14 norepeats[1,2]
+                                   0                           1 
+    15 norepeats[1,3]
+                                   1                           1 
+    16 norepeats[2,1]
+                                   0                           1 
+    17 norepeats[2,2]
+                                   0                           1 
+    18 norepeats[2,3]
+                                   1                           1 
+    19 norepeats[3,1]
+                                   0                           1 
+    20 norepeats[3,2]
+                                   1                           1 
+    21 norepeats[3,3]
+                                   0                           1 
+
+   No. Column name       Activity     Lower bound   Upper bound
+------ ------------    ------------- ------------- -------------
+     1 x[1,1,1]     *              0             0             1 
+     2 x[1,1,2]     *              0             0             1 
+     3 x[1,1,3]     *              0             0             1 
+     4 x[1,2,1]     *              0             0             1 
+     5 x[1,2,2]     *              0             0             1 
+     6 x[1,2,3]     *              0             0             1 
+     7 x[1,3,1]     *              1             0             1 
+     8 x[1,3,2]     *              0             0             1 
+     9 x[1,3,3]     *              0             0             1 
+    10 x[2,1,1]     *              0             0             1 
+    11 x[2,1,2]     *              0             0             1 
+    12 x[2,1,3]     *              0             0             1 
+    13 x[2,2,1]     *              0             0             1 
+    14 x[2,2,2]     *              0             0             1 
+    15 x[2,2,3]     *              0             0             1 
+    16 x[2,3,1]     *              0             0             1 
+    17 x[2,3,2]     *              0             0             1 
+    18 x[2,3,3]     *              1             0             1 
+    19 x[3,1,1]     *              0             0             1 
+    20 x[3,1,2]     *              0             0             1 
+    21 x[3,1,3]     *              0             0             1 
+    22 x[3,2,1]     *              0             0             1 
+    23 x[3,2,2]     *              1             0             1 
+    24 x[3,2,3]     *              0             0             1 
+    25 x[3,3,1]     *              0             0             1 
+    26 x[3,3,2]     *              0             0             1 
+    27 x[3,3,3]     *              0             0             1 
+
+Integer feasibility conditions:
+
+KKT.PE: max.abs.err = 0.00e+00 on row 0
+        max.rel.err = 0.00e+00 on row 0
+        High quality
+
+KKT.PB: max.abs.err = 0.00e+00 on row 0
+        max.rel.err = 0.00e+00 on row 0
+        High quality
+
+End of output
