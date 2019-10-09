@@ -1,9 +1,13 @@
 (define (domain airline)
-    (:requirements :typing :fluents)
+    (:requirements :typing :fluents :action-costs)
     (:types city group plane)
 
     (:predicates
+                ; Planes
                 (plane-at ?p -plane ?x -city)
+                (plane-done ?p -plane)  ; True when plane cant fly any more (due to lack of time)
+
+                ; People groups
                 (group-at ?g -group ?x -city)
                 (group-want ?g -group ?y -city)
                 (group-in-plane ?g -group ?p -plane)
@@ -11,22 +15,29 @@
     )
 
     (:functions
-                (add-distance ?x ?y -city)  ; Distance between cities
+                (city-distance ?x ?y -city)  ; Distance between cities
+                
                 (group-number ?g -group)  ; Number of people in group
+                (group-time ?g -group) ; Group stopwatch
+
                 (plane-seats ?p -plane)  ; Number of seats in place
                 (plane-onboard ?p -plane) ; Number of group in plane
+                (plane-time ?p -plane) ; Plane stopwatch
 
+                ; Global
+                (max-time)
                 (total-distance)
-                (time)  ; TODO(oleguer) This should be plane time
                 (happy-people)
     )
 
     (:action fly :parameters (?p -plane ?x ?y -city)  ; Fly plane p from city x to city y
-                 :precondition (plane-at ?p ?x)
+                 :precondition (and (plane-at ?p ?x)
+                                (< (plane-time) (max_time))
+                                )
                  :effect (and (plane-at ?p ?y)
                               (not (plane-at ?p ?x))
-                              (increase (total-distance) (add-distance ?x ?y))
-                              (decrease (time) 1)
+                              (increase (total-distance) (city-distance ?x ?y))
+                              (increase (plane-time ?p) (city-distance ?x ?y))
                          )
     )
 
@@ -36,10 +47,12 @@
                                       (not (group-want ?g ?x))
                                       (not (group-just-unboarded ?g ?p))
                                       (>= (-(plane-seats ?p) (plane-onboard ?p)) (group-number ?g))
-                                 )
+                                )
                    :effect (and (increase (plane-onboard ?p) (group-number ?g))
                                 (not (group-at ?g ?x))
                                 (group-in-plane ?g ?p)
+                                ; (= (plane-time ?p) (max (plane-time ?p) (group-time ?g)))
+                                (when (>= (group-time ?g) (plane-time ?p)) (= (plane-time ?p) (group-time ?g)))  ; Update time
                             )
     )
 
@@ -54,6 +67,7 @@
                                 (not (group-in-plane ?g ?p))
                                 (when (group-want ?g ?x)
                                     (increase (happy-people) (group-number ?g)))
+                                (= (group-time ?g) (plane-time ?p))
                             )
     )    
 )
