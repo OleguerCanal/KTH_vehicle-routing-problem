@@ -1,36 +1,38 @@
 (define (problem flights)
     (:domain airline)
     (:objects A B C D - city
-              p1 p2 - people)
+              g1 g2 - group
+              p1 p2 - plane)
     (:init
             ; DISTANCES BETWEEN CITIES
             (= (add-distance A B) 1)
-            (= (add-distance A C) 5)
-            (= (add-distance C A) 1)
             (= (add-distance B C) 1)
-            (= (add-distance C B) 1)
-            (= (add-distance B D) 1)
-            (= (add-distance C D) 3)
+            (= (add-distance A C) 100)
 
-            ; PEOPLE
-            (= (people-number p1) 2)
-            (people-at p1 A)
-            (people-want p1 B)
+            ; People groups
+            (= (group-number g1) 2)
+            (group-at g1 A)
+            (group-want g1 C)
 
-            (= (people-number p2) 3)
-            (people-at p2 C)
-            (people-want p2 D)
+            (= (group-number g2) 3)
+            (group-at g2 B)
+            (group-want g2 C)
 
-            
+            ; Planes
+            (plane-at p1 A)
+            ( = (plane-onboard p1) 0)
+            ( = (plane-seats p1) 2)
+
+            (plane-at p2 B)
+            ( = (plane-onboard p2) 0)
+            ( = (plane-seats p2) 6)
+
+
             ; STARTING CONDITIONS
             (= (total-distance) 0)
-            (= (seats) 6)
-            (= (onboard) 0)
             (= (time) 40)
-            (= (happy-people) 0)
-            
-            (plane-at A))
-            
+            (= (happy-people) 0)    
+        )
     (:metric minimize (total-distance))
     ; (:goal (and (<= (time) 0)))
     (:goal (>= (happy-people) 4))
