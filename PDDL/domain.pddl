@@ -7,6 +7,7 @@
                 (people-at ?p - people ?x - city)
                 (people-want ?p - people ?y - city)
                 (people-in-plane ?p - people)
+                (people-just-unboarded ?p - people)
     )
 
     (:functions
@@ -32,6 +33,7 @@
     (:action board :parameters(?x - city ?p  -people)
                    :precondition (and (people-at ?p ?x)
                                       (plane-at ?x)
+                                      (not (people-just-unboarded ?p))
                                       (>= (- (seats) (onboard)) (people-number ?p))
                                  )
                    :effect (and (increase (onboard) (people-number ?p))
@@ -47,6 +49,7 @@
                                  )
                    :effect (and (decrease (onboard) (people-number ?p))
                                 (people-at ?p ?x)
+                                (people-just-unboarded ?p)
                                 (not (people-in-plane ?p))
                                 (when (people-want ?p ?x)
                                     (increase (happy-people) (people-number ?p)))
