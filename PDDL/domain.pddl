@@ -1,11 +1,10 @@
 (define (domain airline)
-    (:requirements :typing :fluents :action-costs)
+    (:requirements :typing :fluents)
     (:types city group plane)
 
     (:predicates
                 ; Planes
                 (plane-at ?p -plane ?x -city)
-                (plane-done ?p -plane)  ; True when plane cant fly any more (due to lack of time)
 
                 ; People groups
                 (group-at ?g -group ?x -city)
@@ -28,12 +27,13 @@
                 (max-time)
                 (total-distance)
                 (happy-people)
+                (tot-people)
     )
 
     (:action fly :parameters (?p -plane ?x ?y -city)  ; Fly plane p from city x to city y
                  :precondition (and (plane-at ?p ?x)
-                                (< (plane-time) (max_time))
-                                )
+                               (< (plane-time ?p) (max-time))
+                               )
                  :effect (and (plane-at ?p ?y)
                               (not (plane-at ?p ?x))
                               (increase (total-distance) (city-distance ?x ?y))
@@ -43,19 +43,21 @@
 
     (:action board :parameters(?g -group ?p -plane ?x -city)  ; Board group g at plane p in city x
                    :precondition (and (group-at ?g ?x)
-                                      (plane-at ?p ?x)
                                       (not (group-want ?g ?x))
                                       (not (group-just-unboarded ?g ?p))
+                                      (plane-at ?p ?x)
+                                      ;(>= (plane-time ?p) (group-time ?g))
+                                      (< (plane-time ?p) (max-time))
                                       (>= (-(plane-seats ?p) (plane-onboard ?p)) (group-number ?g))
                                 )
                    :effect (and (increase (plane-onboard ?p) (group-number ?g))
                                 (not (group-at ?g ?x))
                                 (group-in-plane ?g ?p)
-                                ; (= (plane-time ?p) (max (plane-time ?p) (group-time ?g)))
-                                (when (>= (group-time ?g) (plane-time ?p)) (= (plane-time ?p) (group-time ?g)))  ; Update time
+                                (when (> (group-time ?g) (plane-time ?p))
+                                      (assign (plane-time ?p) (group-time ?g))
+                                )
                             )
     )
-
 
     (:action unboard :parameters(?g -group ?p -plane ?x -city)  ; Unboard group g from plane p in city x
                    :precondition (and (group-in-plane ?g ?p)
@@ -67,7 +69,7 @@
                                 (not (group-in-plane ?g ?p))
                                 (when (group-want ?g ?x)
                                     (increase (happy-people) (group-number ?g)))
-                                (= (group-time ?g) (plane-time ?p))
+                                (assign (group-time ?g) (plane-time ?p))
                             )
     )    
 )
