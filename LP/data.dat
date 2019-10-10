@@ -1,6 +1,19 @@
-set CITIES := 1 2;
+data;
 
-param PERSON :
-  1 2 :=
-1 0 1
-2 0 0;
+set CITIES := 1 2 3;
+set PLANES := 1;
+set PEOPLE := 1 2 3 4;
+
+param PLANE_ORIGIN :
+	1 := # Plane id
+  . 1; # Starting city id
+param PERSON_ORIGIN :
+	1 2 3 4:= # Person id
+  . 1 1 1 1; # Starting city id
+param PERSON_DEST :
+	1 2 3 4:=  # Person id
+  . 2 3 1 2; # Goal city id
+
+# Set origins
+let {p in PLANES} PLANE_POS[p] := PLANE_ORIGIN[p];
+let {p in PEOPLE} PERSON_POS[p] := PERSON_ORIGIN[p];
