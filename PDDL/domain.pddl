@@ -46,7 +46,6 @@
                                       (not (group-want ?g ?x))
                                       (not (group-just-unboarded ?g ?p))
                                       (plane-at ?p ?x)
-                                      ;(>= (plane-time ?p) (group-time ?g))
                                       (< (plane-time ?p) (max-time))
                                       (>= (-(plane-seats ?p) (plane-onboard ?p)) (group-number ?g))
                                 )
