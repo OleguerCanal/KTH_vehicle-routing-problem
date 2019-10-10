@@ -1,138 +1,82 @@
 from __future__ import print_function
-from ortools.sat.python import cp_model
-from ortools.linear_solver import pywraplp
+from ortools.constraint_solver import routing_enums_pb2
+from ortools.constraint_solver import pywrapcp
 
-# class Optimizer(cp_model.CpSolverSolutionCallback):
-#     """Print intermediate solutions."""
+def create_data_model():
 
-#     def __init__(self, flights, timeslots, origin, destination, seats, time, sols):
-#         cp_model.CpSolverSolutionCallback.__init__(self)
-#         self._flights = flights
-#         self._timeslots = timeslots
-#         self._origin = origin
-#         self._destination = destination
-#         self._seats = seats
-#         self._time = time
-#         self._solutions = set(sols)
-#         self._solution_count = 0
+    data = {}
 
-#     def on_solution_callback(self):
-#         if self._solution_count in self._solutions:
-#             print('Solution %i' % self._solution_count)
-#             for i in range(self._origin):
-#                 print('Origin %i' % i)
-#                 for j in range(self._destination):
-#                     is_Route = False
-#                     for t in range(self._timeslots):
-#                         if self.Value(self._flights[(i, j, t)]):
-#                             is_Route = True
-#                             print('  Plane goes from %i to %i at time %i' % (i, j, t))
-#                     #if not is_Route:
-#                         #print('  Nurse {} does not work'.format(n))
-#             print()
-#         self._solution_count += 1
+    data['timeslots'] = 3
+    data['cities'] = 3
+    data['seats'] = 15
+    data['time'] = 24
 
-#     def solution_count(self):
-#         return self._solution_count
+    data['passengers'] = [
+                [0, 12, 15],
+                [13, 0, 15],
+                [14, 16, 0]
+                ]
+    data['distances'] = [
+                [0, 2, 5],
+                [2, 0, 5],
+                [5, 5, 0]
+                ]
+
+    return data
+
+def print_solution(manager, routing, assignment):
+    """Prints assignment on console."""
+    print('Objective: {} hours'.format(assignment.ObjectiveValue()))
+    index = routing.Start(0)
+    plan_output = 'Route for vehicle 0:\n'
+    route_distance = 0
+    while not routing.IsEnd(index):
+        plan_output += ' {} ->'.format(manager.IndexToNode(index))
+        previous_index = index
+        index = assignment.Value(routing.NextVar(index))
+        route_distance += routing.GetArcCostForVehicle(previous_index, index, 0)
+    plan_output += ' {}\n'.format(manager.IndexToNode(index))
+    print(plan_output)
+    plan_output += 'Route distance: {}hours\n'.format(route_distance)
+
 
 def main():
 
-    # TODO: Define problem as GLOP or Constraints Satisfiability
+    # Instantiate the data problem.
+    data = create_data_model()
 
-    # Create the linear solver with the GLOP backend.
-    solver = pywraplp.Solver('simple_lp_program', pywraplp.Solver.GLOP_LINEAR_PROGRAMMING)
+    # Create the routing index manager.
+    manager = pywrapcp.RoutingIndexManager()
 
-    # -------------- DATA -------------- #
+    # Create Routing Model.
+    routing = pywrapcp.RoutingModel(manager)
 
-    #Parameters
-    timeslots = 3
-    origin = 3
-    destination = origin
-    #planes = 3 --> first start with one plane
-    seats = 15
-    time = 24
+    def distance_callback(from_index, to_index):
+        """Returns the distance between the two nodes."""
+        # Convert from routing variable Index to distance matrix NodeIndex.
+        from_node = manager.IndexToNode(from_index)
+        to_node = manager.IndexToNode(to_index)
+        return data['distances'][from_node][to_node]
 
-    passengers = [[0, 12, 15],
-                [13, 0, 15],
-                [14, 16, 0]]
+    transit_callback_index = routing.RegisterTransitCallback(distance_callback)
+    # Define cost of each arc.
+    routing.SetArcCostEvaluatorOfAllVehicles(transit_callback_index)
 
-    distances = [[0, 2, 5],
-                [2, 0, 5],
-                [5, 5, 0]]            
+    # Setting first solution heuristic.
+    search_parameters = pywrapcp.DefaultRoutingSearchParameters()
+    search_parameters.first_solution_strategy = (
+        routing_enums_pb2.FirstSolutionStrategy.PATH_CHEAPEST_ARC)
 
-    #Sets
-    all_timeslots = range(timeslots)
-    all_origin = range(origin)
-    all_destination = range(destination)
-    #all_planes = range(planes)
+    # Solve the problem.
+    assignment = routing.SolveWithParameters(search_parameters)
 
-    model = cp_model.CpModel();
+    print(assignment)
 
-    # -------------- VARIABLES -------------- #
+    # Print solution on console.
+    if assignment:
+        print_solution(manager, routing, assignment)
 
-    flights = {}
-
-    # Creates flight variables
-    # flights[(i,j,t)]: flight goes from 'i' to 'j' at time 't'
-    for i in all_origin:
-        for j in all_destination:
-            for t in all_timeslots:
-                flights[(i,j,t)] = model.NewBoolVar('flight_i%ij%it%i' % (i,j,t))
-
-    # -------------- CONSTRAINTS -------------- #
-
-    #TODO: Define constrains properly according to selected model
-
-    # Each flight is assigned to only one origin-destination combination per timeslot
-    for t in all_timeslots:
-        model.Add(sum(sum(flights[(i,j,t)] for j in all_destination) for i in all_origin) == 1)
-
-    # Number of flights must not be greater that maximum of timeslots
-    model.Add(sum(sum(sum(flights[(i,j,t)] for t in all_timeslots) for j in all_destination) for i in all_origin) <= timeslots)
-
-    # Time employed in flights must not be greater than maximum time
-    model.Add(sum(sum(sum(flights[(i,j,t)] * distances[i][j] for t in all_timeslots) for j in all_destination) for i in all_origin) <= time)
-
-    # Plane must depart at t+1 from same location it arrived at t
-    for j in all_destination:
-        for t in range(0, len(all_timeslots)-1):
-            model.Add(sum(flights[(i,j,t)] for i in all_origin) - sum(flights[(j,k,t+1)] for k in destination) == 0)
-
-    # Maximum of 1 flight per timeslot
-    for t in all_timeslots:
-        model.Add(sum(sum(flights[i,j,t] for j in all_destination) for i in all_origin) <= 1)
-
-    # Plane cannot repeat location twice
-    for i in all_origin:
-        for j in all_destination:
-            model.Add(sum(flights[i,j,t] for t in all_timeslots) <= 1)
-
-    # -------------- OBJECTIVE FUNCTION -------------- #
-
-    #TODO: define properly objective function
-
-    objective = solver.Objective()
-    objective.SetCoefficient()
-
-    objective = sum(sum(sum(flights[(i,j,t)] * distances[i][j] * passengers[i][j] for t in all_timeslots) for j in all_destination) for i in all_origin)
-
-    # # Creates the solver and solve.
-    # solver = cp_model.CpSolver()
-    # solver.parameters.linearization_level = 0
-    # # Display the first five solutions.
-    # a_few_solutions = range(5)
-
-    # solution_printer = Optimizer(flights, timeslots, origin, destination, seats, time, a_few_solutions)
-    # solver.SearchForAllSolutions(model, solution_printer)
-
-    # # Statistics.
-    # print()
-    # print('Statistics')
-    # print('  - conflicts       : %i' % solver.NumConflicts())
-    # print('  - branches        : %i' % solver.NumBranches())
-    # print('  - wall time       : %f s' % solver.WallTime())
-    # print('  - solutions found : %i' % solution_printer.solution_count())
-
+    
 
 if __name__ == '__main__':
     main()
