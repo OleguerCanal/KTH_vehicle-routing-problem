@@ -1,0 +1,23 @@
+Problem 0 results:
+
+Route: Stockholm -> Paris -> Rome -> Stockholm
+*all 5 passengers moved to final destination
+
+Passenger 1: 
+Paris -> Rome
+
+Passenger 2:
+Stockholm -> Paris
+
+Passenger 3:
+Rome -> Stockholm
+
+Passenger 4:
+Rome -> Stockholm
+
+Passenger 5:
+Stockholm -> Paris -> Rome
+
+Objective func: 10.2 (if p5 counts as separate flights)
+Objective func: 10.1 (if p5 counts as one flight (st->r)) 
+
