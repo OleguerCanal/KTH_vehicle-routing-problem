@@ -21,3 +21,5 @@ Stockholm -> Paris -> Rome
 Objective func: 10.2 (if p5 counts as separate flights)
 Objective func: 10.1 (if p5 counts as one flight (st->r)) 
 
+speed: 0.015625 CPU
+iterations: 188
