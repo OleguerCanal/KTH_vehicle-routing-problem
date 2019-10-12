@@ -1,19 +1,22 @@
 data;
 
+param TIMESTEPS = 5;
+
 set CITIES := 1 2 3;
 set PLANES := 1;
-set PEOPLE := 1 2 3 4;
+set PEOPLE := 1 2 3;
 
 param PLANE_ORIGIN :
 	1 := # Plane id
   . 1; # Starting city id
 param PERSON_ORIGIN :
-	1 2 3 4:= # Person id
-  . 1 1 1 1; # Starting city id
+	1 2 3:= # Person id
+  . 1 1 1; # Starting city id
 param PERSON_DEST :
-	1 2 3 4:=  # Person id
-  . 2 3 1 2; # Goal city id
+	1 2 3:=  # Person id
+  . 2 3 1; # Goal city id
 
 # Set origins
-let {p in PLANES} PLANE_POS[p] := PLANE_ORIGIN[p];
-let {p in PEOPLE} PERSON_POS[p] := PERSON_ORIGIN[p];
+let {p in PLANES} PLANE_POS[p, 0] := PLANE_ORIGIN[p];
+let {p in PEOPLE} PERSON_POS[p, 0] := PERSON_ORIGIN[p];
+let {p in PEOPLE, pl in PLANES, t in TIME} PERSON_GETS_PLANE[p, pl, t] := 1;
