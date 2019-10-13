@@ -78,8 +78,13 @@ class Flight:
                 return True
         return False
 
+    def get_cost(self):
+        if self.origin == self.destination:
+            return 0
+        return 1 # TODO(oleguer): Return distance between cities
+
     def __str__(self):
-        s =  "Plane " + str(self.plane.id) + ": " + str(self.origin) + "->" + str(self.destination) + ": Pass: "
+        s =  "Plane " + str(self.plane.id) + ": " + str(self.origin) + "->" + str(self.destination) + " Pass: "
         for person in self.passengers:
             s += str(person.id) + ", "
         return s
@@ -110,6 +115,12 @@ class Action:
     def add_flights(self, flights):
         for flight in flights:
             self.flights.append(flight[0])
+
+    def get_cost(self):
+        cost = 0
+        for flight in self.flights:
+            cost += flight.get_cost()
+        return cost
 
     def __str__(self):
         print("Action:")
@@ -173,9 +184,12 @@ class State:
                     # Get all possible destinations
                     plane_flights = []
                     for destination in self.cities:
-                        plane_flights.append(Flight(plane, city, destination, passengers))
+                        if (destination != city) or ((destination == city) and len(passengers) == 0):
+                            plane_flights.append(Flight(plane, city, destination, passengers))
                     combination_flights.append(plane_flights)
-                
+
+                # Add case for plane not moving
+                combination_flights    
                 # Augment combinations
                 combination_flights = list(itertools.product(*combination_flights))
                 # for comb in combination_flights:
@@ -186,6 +200,8 @@ class State:
                     city_combinations = np.array(combination_flights)
                 else:
                     city_combinations = np.concatenate((city_combinations, np.array(combination_flights)))
+                
+                
                 
             actions.append(city_combinations)
         actions = list(itertools.product(*actions))
@@ -249,12 +265,18 @@ class State:
 
 # Given state and action applies step returns (next_state, reward, done)
 def step(state, action):
+    # Compute next state
     next_state = copy.deepcopy(state)
     next_state.apply_action(action)
-    reward = 2*(next_state.happy_people() - state.happy_people())
-    reward -= 2 # Penalize time
-    # TODO(oleguer): Account for action cost (sum of flights cost)
+
+
+    # Compute reward of this action
+    reward = 2*(next_state.happy_people() - state.happy_people())   # Add happy people increment
+    reward -= 2                                                     # Penalize time
+    reward -= action.get_cost()                                     # Substract flights cost
+
+
     done = (next_state.happy_people() == len(next_state.people))
     if done:
-        reward += next_state.happy_people()
+        reward += 2*next_state.happy_people()
     return next_state, reward, done

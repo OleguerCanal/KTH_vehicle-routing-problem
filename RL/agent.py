@@ -1,12 +1,10 @@
 # RL Q-Learning implementation of airline variation of VRP
-# Inspiration from https://www.geeksforgeeks.org/q-learning-in-python/
 from collections import defaultdict
 import copy
 import numpy as np
 import matplotlib
 import matplotlib.style
 import itertools
-# import pandas as pd
 import sys
 from tqdm import tqdm
 from utils import plotting 
@@ -67,6 +65,7 @@ class RlAgent:
             episode_lengths = np.zeros(num_episodes),
             episode_rewards = np.zeros(num_episodes))
        
+        print("Training...")
         for ith_episode in tqdm(range(num_episodes)):
             state = copy.deepcopy(initial_state)
             step_count = 0
@@ -96,7 +95,7 @@ class RlAgent:
         done = False
         steps = 0
         while not done and steps < max_timesteps:
-            print("\nTIMESTEP: " + str(steps))
+            print("\nSTEP: " + str(steps))
             best_action = self.Q.best_action(state)
             state, reward, done = step(state, best_action)
             print(best_action)
@@ -110,7 +109,7 @@ if __name__ == "__main__":
 
     agent = RlAgent()
     stats = agent.train(initial_state, max_timesteps = time_steps,
-                num_episodes = 200, lr = 0.7, discount = 0.7, epsilon = 0.2)
+                num_episodes = 100, lr = 0.7, discount = 0.7, epsilon = 0.2)
 
-    plotting.plot_episode_stats(stats)
+    # plotting.plot_episode_stats(stats)
     agent.solve(initial_state, max_timesteps = 10)

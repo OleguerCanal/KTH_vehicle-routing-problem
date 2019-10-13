@@ -13,12 +13,15 @@ import copy
 #     return State(cities, people, planes), time_steps
 
 def get_initial_state():
-    cities = ["A", "B", "C"]
+    cities = ["A", "B", "C", "D"]
     people =   [Person("A", "B"),\
                 Person("A", "B"),\
                 Person("A", "B"),\
-                Person("A", "B"),\
-                Person("A", "B"),\
+                Person("A", "D"),\
+                Person("C", "A"),\
+                Person("C", "A"),\
+                Person("D", "A"),\
+                Person("D", "A"),\
                 Person("B", "C")]
     planes = [Plane("A"), Plane("B")]
     time_steps = 5
