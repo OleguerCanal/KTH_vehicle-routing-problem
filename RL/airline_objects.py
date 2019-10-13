@@ -252,9 +252,9 @@ def step(state, action):
     next_state = copy.deepcopy(state)
     next_state.apply_action(action)
     reward = 2*(next_state.happy_people() - state.happy_people())
-    reward -= 1 # Penalize time
+    reward -= 2 # Penalize time
     # TODO(oleguer): Account for action cost (sum of flights cost)
     done = (next_state.happy_people() == len(next_state.people))
     if done:
-        reward += 1000
+        reward += next_state.happy_people()
     return next_state, reward, done
