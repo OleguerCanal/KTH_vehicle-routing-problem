@@ -1,5 +1,6 @@
 import numpy as np
 import itertools
+import copy
 
 class Person:
     def __init__(self, id, origin, destination):
@@ -18,6 +19,17 @@ class Person:
         s +=  ", Dest: " + str(self.destination)
         return s
 
+    def __eq__(self, other):
+        if not (hasattr(other, "id") and (self.id == other.id)):
+            return False
+        return (self.location == other.location) and (self.destination == other.destination)
+
+    def __hash__(self):
+        hash_val = hash(self.id)
+        hash_val += hash(self.location)
+        hash_val += hash(self.destination)
+        return hash_val
+        # return hash(repr(self))
 
 class Plane:
     def __init__(self, id, origin):
@@ -34,7 +46,17 @@ class Plane:
         s =  "Plane: " + str(self.id)
         s +=  ", Loc: " + str(self.location)
         return s
+    
+    def __eq__(self, other):
+        if not (hasattr(other, "id") and (self.id == other.id)):
+            return False
+        return other.location == self.location
 
+    def __hash__(self):
+        hash_val = hash(self.id)
+        hash_val += hash(self.location)
+        return hash_val
+        # return hash(repr(self))
 
 class Flight:
     def __init__(self, plane, origin, destination, passengers):
@@ -58,6 +80,23 @@ class Flight:
             s += str(person.id) + ", "
         return s
 
+    def __eq__(self, other):
+        # print("eq")
+        # print(other.plane == self.plane)
+        # print(other.origin == self.origin)
+        # print(other.destination == self.destination)
+        # print(other.passengers == self.passengers)
+        # print("---")
+        return (other.plane == self.plane) and (other.origin == self.origin) and\
+                (other.destination == self.destination) and (other.passengers == self.passengers)
+
+    def __hash__(self):
+        hash_val = hash(self.plane)
+        hash_val += 2*hash(self.origin)
+        hash_val += 3*hash(self.destination)
+        for person in self.passengers:
+            hash_val += hash(person)
+        return hash_val
 
 class Action:
     def __init__(self, flights):
@@ -74,6 +113,14 @@ class Action:
             print(flight)
         return ""
     
+    def __eq__(self, other):
+        return set(self.flights) == set(other.flights)
+
+    def __hash__(self):
+        hash_val = 0
+        for flight in self.flights:
+            hash_val += hash(flight)
+        return hash_val
 
 class State:
     def __init__(self, cities, people, planes):
@@ -169,6 +216,7 @@ class State:
         return planes
 
     def __str__(self):
+        print("------")
         print("State:")
         for city in self.cities:
             print("City " + str(city) + ":")
@@ -180,13 +228,29 @@ class State:
                     print(plane)
         return "------"
 
+    def __eq__(self, other):
+        if other.planes != self.planes:
+            return False
+        if other.people != self.people:
+            return False
+        return self.cities == other.cities
+
+    def __hash__(self):
+        hash_val = 0
+        for plane in self.planes:
+            hash_val += hash(plane)
+        for person in self.people:
+            hash_val += hash(person)
+        return hash_val
 
 # Given state and action applies step returns (next_state, reward, done)
 def step(state, action):
     next_state = copy.deepcopy(state)
-    next_state.apply_action(actoion)
-    reward = next_state.happy_people() - state.happy_people()
+    next_state.apply_action(action)
+    reward = 2*(next_state.happy_people() - state.happy_people())
     reward -= 1 # Penalize time
     # TODO(oleguer): Account for action cost (sum of flights cost)
-    done = (next_state.happy_people == len(next_state.people))
-    return next_state, reward
+    done = (next_state.happy_people() == len(next_state.people))
+    if done:
+        reward += 1000
+    return next_state, reward, done
