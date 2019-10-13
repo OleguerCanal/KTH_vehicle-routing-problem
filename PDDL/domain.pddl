@@ -25,12 +25,11 @@
                 (plane-onboard ?p -plane) ; Number of group in plane
                 (plane-time ?p -plane) ; Plane stopwatch
 
-                (ticket-cost ?x ?y -city) ; Cost of ticket from city x to y
-
                 ; Global
                 (deadline)
                 (happy-people)
                 (tot-people)
+                (tot-time)
     )
 
     (:action fly :parameters (?p -plane ?x ?y -city)  ; Fly plane p from city x to city y
@@ -40,8 +39,8 @@
                  :effect (and (plane-at ?p ?y)
                               (not (plane-at ?p ?x))
                               (increase (plane-time ?p) (city-distance ?x ?y))
+                              (increase (tot-time ?p) (city-distance ?x ?y))
                               (when (>= (plane-time ?p) (deadline)) (deadline-reached ?p))
-                              (increase (revenue) (* (plane-onboard ?p) (ticket-cost ?x ?y)))
                          )
     )
 
@@ -60,8 +59,6 @@
                                 (when (> (group-time ?g) (plane-time ?p))
                                       (assign (plane-time ?p) (group-time ?g))
                                 )
-                                (increase (plane-time ?p) 1)
-                                (increase (group-time ?g) 1)
                             )
     )
 
@@ -77,8 +74,6 @@
                                     (increase (happy-people) (group-number ?g)))
                                 (increase (group-flights-count ?g) 1)
                                 (assign (group-time ?g) (plane-time ?p))
-                                (increase (plane-time ?p) 1)
-                                (increase (group-time ?g) 1)
                             )
     )    
 )
