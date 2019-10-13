@@ -5,10 +5,22 @@ import numpy as np
 import copy
 
 
-def get_initial_state_1():
+# def get_initial_state_1():
+#     cities = ["A", "B", "C"]
+#     people = [Person(1, "A", "B"), Person(2, "A", "B")]
+#     planes = [Plane(1, "A"), Plane(2, "B")]
+#     time_steps = 5
+#     return State(cities, people, planes), time_steps
+
+def get_initial_state():
     cities = ["A", "B", "C"]
-    people = [Person(1, "A", "B"), Person(2, "A", "B")]
-    planes = [Plane(1, "A"), Plane(2, "B")]
+    people =   [Person("A", "B"),\
+                Person("A", "B"),\
+                Person("A", "B"),\
+                Person("A", "B"),\
+                Person("A", "B"),\
+                Person("B", "C")]
+    planes = [Plane("A"), Plane("B")]
     time_steps = 5
     return State(cities, people, planes), time_steps
 
