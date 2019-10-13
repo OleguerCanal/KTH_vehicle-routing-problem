@@ -4,6 +4,7 @@ set ORIGIN;
 set DESTINATION;
 param SEATS; #number of seats
 param AIRTIME {i in ORIGIN, j in DESTINATION};
+param TICKETCOST {i in ORIGIN, j in DESTINATION};
 param TIME;
 param S1 {i in ORIGIN};
 param S2 {i in ORIGIN};
@@ -16,12 +17,6 @@ param E3 {i in DESTINATION};
 param E4 {i in DESTINATION};
 param E5 {i in DESTINATION};
 
-var y1 binary;
-var y2 binary;
-var y3 binary;
-var y4 binary;
-var y5 binary;
-
 var x {i in ORIGIN, j in DESTINATION, t in TIMESLOTS} binary; #flight for each timeslot
 
 var m1 {i in ORIGIN, j in DESTINATION, t in TIMESLOTS} binary; #person's destination at each timeslot
@@ -32,8 +27,8 @@ var m5 {i in ORIGIN, j in DESTINATION, t in TIMESLOTS} binary; #person's destina
 
 maximize profit: #number of filled seats*flytime*if flight occured
 	sum {i in ORIGIN, j in DESTINATION, t in TIMESLOTS} (
-	AIRTIME[i,j]*m1[i,j,t]*E1[j]*x[i,j,t]+AIRTIME[i,j]*m2[i,j,t]*x[i,j,t]*E2[j]+AIRTIME[i,j]*m3[i,j,t]*x[i,j,t]*E3[j]
-	+AIRTIME[i,j]*m4[i,j,t]*x[i,j,t]*E4[j]+AIRTIME[i,j]*m5[i,j,t]*E5[j]*x[i,j,t]);
+	TICKETCOST[i,j]*m1[i,j,t]*E1[j]*x[i,j,t]+TICKETCOST[i,j]*m2[i,j,t]*x[i,j,t]*E2[j]+TICKETCOST[i,j]*m3[i,j,t]*x[i,j,t]*E3[j]
+	+TICKETCOST[i,j]*m4[i,j,t]*x[i,j,t]*E4[j]+TICKETCOST[i,j]*m5[i,j,t]*E5[j]*x[i,j,t]);
 
 #s.t. maxflights: #cannot take more flights than timeslots
  #   sum {i in ORIGIN, j in DESTINATION, t in TIMESLOTS} x[i,j,t] <= 3;
