@@ -96,12 +96,13 @@ class RlAgent:
         done = False
         steps = 0
         while not done and steps < max_timesteps:
-            print("TIMESTEP: " + str(steps))
+            print("\nTIMESTEP: " + str(steps))
             best_action = self.Q.best_action(state)
             state, reward, done = step(state, best_action)
             print(best_action)
             print("Reward:", reward)
-            print(state)
+            # print(state)
+            steps += 1
 
 
 if __name__ == "__main__":
@@ -109,7 +110,7 @@ if __name__ == "__main__":
 
     agent = RlAgent()
     stats = agent.train(initial_state, max_timesteps = time_steps,
-                num_episodes = 100, lr = 0.7, discount = 0.8, epsilon = 0.1)
+                num_episodes = 200, lr = 0.7, discount = 0.7, epsilon = 0.2)
 
     plotting.plot_episode_stats(stats)
     agent.solve(initial_state, max_timesteps = 10)
