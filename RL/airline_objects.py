@@ -3,8 +3,10 @@ import itertools
 import copy
 
 class Person:
-    def __init__(self, id, origin, destination):
-        self.id = id
+    class_counter = 0
+    def __init__(self, origin, destination):
+        self.id = Person.class_counter
+        Person.class_counter += 1
         self.origin = origin
         self.location = origin
         self.destination = destination
@@ -32,8 +34,10 @@ class Person:
         # return hash(repr(self))
 
 class Plane:
-    def __init__(self, id, origin):
-        self.id = id
+    class_counter = 0
+    def __init__(self, origin):
+        self.id = Plane.class_counter
+        Plane.class_counter += 1
         self.origin = origin
         self.location = origin
         #TODO(oleguer): Add plane characteristics
