@@ -9,9 +9,10 @@ import sys
 from tqdm import tqdm
 from utils import plotting 
 matplotlib.style.use('ggplot')
+import random
 
 from airline_objects import State, Action, step
-from data import get_initial_state
+from data import get_initial_state, get_random_state
 
 class Quality():
     def __init__(self):
@@ -44,10 +45,13 @@ class Quality():
                 best_action_indx = idx
         return best_action_indx
 
-    def best_action(self, state):
-        if state not in self.Q:
-            return 0
-        return max(self.Q[state], key=self.Q[state].get)
+    # def best_action(self, state):
+    #     if state not in self.Q:
+    #         print("State never seen, taking greedy action")
+    #         for action in state.get_actions():
+                
+    #         return np.random.choice()
+    #     return max(self.Q[state], key=self.Q[state].get)
 
 class RlAgent:
     def __init__(self):
@@ -64,14 +68,22 @@ class RlAgent:
         stats = plotting.EpisodeStats(
             episode_lengths = np.zeros(num_episodes),
             episode_rewards = np.zeros(num_episodes))
-       
+        
+        total_actions_num = 0
+        total_actions_num_size = 0
+        
         print("Training...")
         for ith_episode in tqdm(range(num_episodes)):
             state = copy.deepcopy(initial_state)
             step_count = 0
             
+            
             for t in itertools.count(): # Repeat until convergence
                 actions = state.get_actions()  # Get all possible actions
+                if len(actions) == 0:
+                    break
+                total_actions_num += len(actions)
+                total_actions_num_size += 1
                 action = self.__epsilon_greedy(state, epsilon, actions)  # Choose one following epsilon-greedy
                 next_state, reward, done = step(state, action)  # Take action
     
@@ -89,7 +101,11 @@ class RlAgent:
                     break
                 state = next_state
                 step_count += 1
-        return stats 
+        # To compute branching factor stats
+        branching_factor = 0
+        if total_actions_num_size != 0:
+            branching_factor = total_actions_num/total_actions_num_size
+        return stats, branching_factor
 
     def solve(self, state, max_timesteps):
         done = False
@@ -105,11 +121,11 @@ class RlAgent:
 
 
 if __name__ == "__main__":
-    initial_state, time_steps = get_initial_state() # From data file
-
     agent = RlAgent()
-    stats = agent.train(initial_state, max_timesteps = time_steps,
-                num_episodes = 100, lr = 0.7, discount = 0.7, epsilon = 0.2)
 
-    # plotting.plot_episode_stats(stats)
+    # Fixed initialization
+    initial_state, time_steps = get_initial_state() # From data file
+    stats, _ = agent.train(initial_state, max_timesteps = time_steps,
+                num_episodes = 100, lr = 0.7, discount = 0.7, epsilon = 0.2)
+    plotting.plot_episode_stats(stats)
     agent.solve(initial_state, max_timesteps = 10)

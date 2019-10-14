@@ -12,20 +12,35 @@ import copy
 #     time_steps = 5
 #     return State(cities, people, planes), time_steps
 
+cities = ["A", "B", "C", "D"]
+time_steps = 5
+
+
 def get_initial_state():
-    cities = ["A", "B", "C", "D"]
     people =   [Person("A", "B"),\
                 Person("A", "B"),\
                 Person("A", "B"),\
-                Person("A", "D"),\
-                Person("C", "A"),\
-                Person("C", "A"),\
-                Person("D", "A"),\
-                Person("D", "A"),\
+                # Person("A", "D"),\
+                # Person("C", "A"),\
+                # Person("C", "A"),\
+                # Person("D", "A"),\
+                # Person("D", "A"),\
                 Person("B", "C")]
-    planes = [Plane("A"), Plane("B")]
-    time_steps = 5
+    planes = [Plane("A", 2)]
     return State(cities, people, planes), time_steps
+
+def get_random_state(city_number, people_number, planes_number):
+    random_cities = range(city_number)
+    people = []
+    for i in range(people_number):
+        people.append(Person(np.random.choice(random_cities), np.random.choice(random_cities)))
+    
+    planes = []
+    for i in range(planes_number):
+        planes.append(Plane(np.random.choice(random_cities), 2))
+
+    return State(random_cities, people, planes), time_steps
+    
 
 if __name__ == "__main__":
     pass
