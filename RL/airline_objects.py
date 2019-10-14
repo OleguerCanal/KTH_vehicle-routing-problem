@@ -35,12 +35,12 @@ class Person:
 
 class Plane:
     class_counter = 0
-    def __init__(self, origin):
+    def __init__(self, origin, seats):
         self.id = Plane.class_counter
         Plane.class_counter += 1
         self.origin = origin
         self.location = origin
-        #TODO(oleguer): Add plane characteristics
+        self.seats = seats
 
     def get_flights(self, state):
         '''Return list of Possible flights
@@ -181,15 +181,20 @@ class State:
                         if plane_id == plane.id:
                             passengers.append(passenger)
                     
-                    # Get all possible destinations
-                    plane_flights = []
-                    for destination in self.cities:
-                        if (destination != city) or ((destination == city) and len(passengers) == 0):
-                            plane_flights.append(Flight(plane, city, destination, passengers))
-                    combination_flights.append(plane_flights)
+                    boardable_passengers = [passengers]
+                    # if len(passengers) > plane.seats:
+                    #     boardable_passengers = list(itertools.combinations(set(passengers), plane.seats))
+                    
+                    # For all passenger combinations
+                    for passengers in boardable_passengers:
+                        # print(len(passengers))
+                        # Get all possible destinations
+                        plane_flights = []
+                        for destination in self.cities:
+                            if (destination != city) or ((destination == city) and len(passengers) == 0):
+                                plane_flights.append(Flight(plane, city, destination, passengers))
+                        combination_flights.append(plane_flights)
 
-                # Add case for plane not moving
-                combination_flights    
                 # Augment combinations
                 combination_flights = list(itertools.product(*combination_flights))
                 # for comb in combination_flights:
@@ -212,11 +217,12 @@ class State:
             final_actions.append(Action(action))
         return final_actions
 
-    def apply_action(self, action):
+    def apply_action(self, action, missed_plane_prob = 0.0):
         for flight in action.flights:
             for person in self.people:
                 if flight.has_passenger(person):
-                    person.location = flight.destination
+                    if np.random.uniform() >= missed_plane_prob
+                        person.location = flight.destination
             for plane in self.planes:
                 if flight.has_plane(plane):
                     plane.location = flight.destination
@@ -264,10 +270,10 @@ class State:
         return hash_val
 
 # Given state and action applies step returns (next_state, reward, done)
-def step(state, action):
+def step(state, action, missed_plane_prob = 0):
     # Compute next state
     next_state = copy.deepcopy(state)
-    next_state.apply_action(action)
+    next_state.apply_action(action, missed_plane_prob)
 
 
     # Compute reward of this action
