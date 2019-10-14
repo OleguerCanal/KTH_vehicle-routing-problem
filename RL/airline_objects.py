@@ -221,7 +221,7 @@ class State:
         for flight in action.flights:
             for person in self.people:
                 if flight.has_passenger(person):
-                    if np.random.uniform() >= missed_plane_prob
+                    if np.random.uniform() >= missed_plane_prob:
                         person.location = flight.destination
             for plane in self.planes:
                 if flight.has_plane(plane):
