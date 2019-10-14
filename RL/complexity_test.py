@@ -33,19 +33,10 @@ if __name__ == "__main__":
     Y = np.arange(min_planes, max_planes, 1)
     X, Y = np.meshgrid(X, Y)
     Z = np.zeros(X.shape)
-    print(X)
-    print(Y)
-    print(Z)
     # a = raw_input()
     for i, people in enumerate(range(min_people, max_people, 2)):
         for j, planes in enumerate(range(min_planes, max_planes, 1)):
-            print(i)
-            print(j)
             Z[j][i] = get_branch_factor(cities, people, planes)
-
-    print(X)
-    print(Y)
-    print(Z)
 
     fig = plt.figure()
     ax = fig.gca(projection='3d')
@@ -54,7 +45,7 @@ if __name__ == "__main__":
                         linewidth=0, antialiased=False)
 
     # Customize the z axis.
-    ax.set_zlim(0, 500)
+    ax.set_zlim(0, np.max(Z))
     ax.zaxis.set_major_locator(LinearLocator(10))
     ax.zaxis.set_major_formatter(FormatStrFormatter('%.02f'))
 
