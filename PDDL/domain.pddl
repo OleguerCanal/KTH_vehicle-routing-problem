@@ -4,26 +4,26 @@
 
     (:predicates
                 ; Planes
-                (plane-at ?p -plane ?x -city)
+                (plane-at ?p - plane ?x - city)
 
                 ; People groups
-                (group-at ?g -group ?x -city)
-                (group-want ?g -group ?y -city)
-                (group-in-plane ?g -group ?p -plane)
-                (group-just-unboarded ?g -group ?p -plane)
+                (group-at ?g - group ?x - city)
+                (group-want ?g - group ?y - city)
+                (group-in-plane ?g - group ?p - plane)
+                (group-just-unboarded ?g - group ?p - plane)
                 (deadline-reached ?p - plane) ; This plane can't fly anymore
     )
 
     (:functions
-                (city-distance ?x ?y -city)  ; Distance between cities
+                (city-distance ?x ?y - city)  ; Distance between cities
                 
-                (group-number ?g -group)  ; Number of people in group
-                (group-time ?g -group) ; Group stopwatch
-                (group-flights-count ?g -group) ; How many times group ?g was unboarded
+                (group-number ?g - group)  ; Number of people in group
+                (group-time ?g - group) ; Group stopwatch
+                (group-flights-count ?g - group) ; How many times group ?g was unboarded
 
-                (plane-seats ?p -plane)  ; Number of seats in place
-                (plane-onboard ?p -plane) ; Number of group in plane
-                (plane-time ?p -plane) ; Plane stopwatch
+                (plane-seats ?p - plane)  ; Number of seats in place
+                (plane-onboard ?p - plane) ; Number of group in plane
+                (plane-time ?p - plane) ; Plane stopwatch
 
                 ; Global
                 (deadline)
@@ -32,19 +32,19 @@
                 (tot-time)
     )
 
-    (:action fly :parameters (?p -plane ?x ?y -city)  ; Fly plane p from city x to city y
+    (:action fly :parameters (?p - plane ?x ?y - city)  ; Fly plane p from city x to city y
                  :precondition (and (plane-at ?p ?x)
                                     (not (deadline-reached ?p))
                                )
                  :effect (and (plane-at ?p ?y)
                               (not (plane-at ?p ?x))
                               (increase (plane-time ?p) (city-distance ?x ?y))
-                              (increase (tot-time ?p) (city-distance ?x ?y))
+                              (increase (tot-time) (city-distance ?x ?y))
                               (when (>= (plane-time ?p) (deadline)) (deadline-reached ?p))
                          )
     )
 
-    (:action board :parameters(?g -group ?p -plane ?x -city)  ; Board group g at plane p in city x
+    (:action board :parameters(?g - group ?p - plane ?x - city)  ; Board group g at plane p in city x
                    :precondition (and (not (deadline-reached ?p))
                                       (group-at ?g ?x)
                                       (not (group-want ?g ?x))
@@ -62,7 +62,7 @@
                             )
     )
 
-    (:action unboard :parameters(?g -group ?p -plane ?x -city)  ; Unboard group g from plane p in city x
+    (:action unboard :parameters(?g - group ?p - plane ?x - city)  ; Unboard group g from plane p in city x
                    :precondition (and (group-in-plane ?g ?p)
                                       (plane-at ?p ?x)
                                  )

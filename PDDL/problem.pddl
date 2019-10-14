@@ -1,7 +1,7 @@
 (define (problem flights)
     (:domain airline)
     (:objects Paris Rome Stockholm NY Amsterdam - city
-              g1 g2 g3 g4 g5 g6 g7- group
+              g1 g2 g3 g4 - group
               p1 p2 p3 - plane)
     (:init
             ; Cities
