@@ -30,6 +30,7 @@
                 (happy-people)
                 (tot-people)
                 (tot-time)
+                (tot-flights)
     )
 
     (:action fly :parameters (?p - plane ?x ?y - city)  ; Fly plane p from city x to city y
@@ -41,6 +42,7 @@
                               (increase (plane-time ?p) (city-distance ?x ?y))
                               (increase (tot-time) (city-distance ?x ?y))
                               (when (>= (plane-time ?p) (deadline)) (deadline-reached ?p))
+                              (increase (tot-flights) 1)
                          )
     )
 
@@ -49,7 +51,6 @@
                                       (group-at ?g ?x)
                                       (not (group-want ?g ?x))
                                       (not (group-just-unboarded ?g ?p))
-                                      (< (group-flights-count ?g) 10)
                                       (plane-at ?p ?x)
                                       (>= (-(plane-seats ?p) (plane-onboard ?p)) (group-number ?g))
                                 )
@@ -72,7 +73,6 @@
                                 (not (group-in-plane ?g ?p))
                                 (when (group-want ?g ?x)
                                     (increase (happy-people) (group-number ?g)))
-                                (increase (group-flights-count ?g) 1)
                                 (assign (group-time ?g) (plane-time ?p))
                             )
     )    
