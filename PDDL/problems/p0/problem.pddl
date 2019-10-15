@@ -52,7 +52,7 @@
             (= (plane-onboard p1) 0)
             (= (plane-time p1) 0)
 
-            (= (tot-people) -5)
+            (= (tot-people) 5)
             (= (deadline) 100000)
             (= (happy-people) 0)
             (= (tot-flights) 0)
@@ -60,13 +60,7 @@
             (= (one) 1)
         )
 
-    (:goal (or
-               ;(forall (?p - plane) (deadline-reached ?p))
-               ;(= (happy-people) (tot-people))
-               (= (tot-flights) 3)
-           )
+    (:goal (= (happy-people) (tot-people))
     )
-    (:metric minimize (happy-people))
-    ;(:metric minimize (tot-flights))
-   ; (:metric minimize (- (happy-people) (tot-flights)))
+    (:metric minimize (tot-flights))
 )
