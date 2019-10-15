@@ -12,7 +12,7 @@ matplotlib.style.use('ggplot')
 import random
 
 from airline_objects import State, Action, step
-from data import get_initial_state, get_random_state
+from data import *
 
 class Quality():
     def __init__(self):
@@ -69,6 +69,7 @@ class RlAgent:
         
         total_actions_num = 0
         total_actions_num_size = 0
+        total_iterations = 0
         
         print("Training...")
         for ith_episode in tqdm(range(num_episodes)):
@@ -99,30 +100,46 @@ class RlAgent:
                     break
                 state = next_state
                 step_count += 1
+                total_iterations += 1
+
         # To compute branching factor stats
         branching_factor = 0
         if total_actions_num_size != 0:
             branching_factor = total_actions_num/total_actions_num_size
-        return stats, branching_factor
+        return stats, branching_factor, total_iterations
 
     def solve(self, state, max_timesteps):
         done = False
         steps = 0
+        total_cost = 0
+        initial_state = copy.deepcopy(state)
         while not done and steps < max_timesteps:
             print("\nSTEP: " + str(steps))
             best_action = self.Q.best_action(state)
             state, reward, done = step(state, best_action)
             print(best_action)
+            total_cost += best_action.get_cost()
             steps += 1
+        
+        score = state.happy_people() - initial_state.happy_people()
+        print("Happy pople:", score)
+        score -= total_cost
+        print("Total cost:", total_cost)
+        return score
 
 
 if __name__ == "__main__":
     agent = RlAgent()
 
     # Fixed initialization
-    initial_state, time_steps = get_initial_state() # From data file
-    stats, _ = agent.train(initial_state, max_timesteps = time_steps,
-                num_episodes = 1000, lr = 0.7, discount = 0.7, epsilon = 0.2,
+    # initial_state, time_steps = get_initial_state() # From data file
+    initial_state, time_steps = problem_0_2() # From data file
+
+    # for _ in 
+    stats, _, iterations = agent.train(initial_state, max_timesteps = time_steps,
+                num_episodes = 100, lr = 0.5, discount = 0.7, epsilon = 0.2,
                 miss_flight_prob = 0.)  # 20% chance of missing flight (stochasticity)
     # plotting.plot_episode_stats(stats)
-    agent.solve(initial_state, max_timesteps = time_steps)
+    score = agent.solve(initial_state, max_timesteps = time_steps)
+    print("score:", score)
+    print("iterations:", iterations)

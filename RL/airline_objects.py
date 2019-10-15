@@ -118,7 +118,6 @@ class Action:
 
     def add_flights(self, flights):
         for flight in flights:
-            # print(flight)
             for f in flight:
                 self.flights.append(f)
 
@@ -159,6 +158,14 @@ class State:
     def city_distance(self, a, b):
         return self.city_distances[self.cities.index(a)][self.cities.index(b)]
 
+    def planes_where_people(self):
+        score = 0
+        for plane in self.planes:
+            for person in self.people:
+                if person.location == plane.location:
+                    score += 1
+        return score
+
     def happy_people(self):
         happy_people = 0
         for person in self.people:
@@ -176,23 +183,19 @@ class State:
             planes_in_city = self.__get_planes_in_city(city)
             if len(planes_in_city) == 0:
                 continue
-            for plane_inc in planes_in_city:
-                print(plane_inc)
             people_in_city = self.__people_in_city(city)
             planes_id = [plane.id for plane in planes_in_city]
             planes_id.append(-1)  # -1 meaning they dont get on any plane
-            print(planes_id)
             
             # Get all possible passengers combinations
             combinations = list(itertools.product(planes_id, repeat=len(people_in_city)))
-            for c in combinations:
-                print(c)
+            # for c in combinations:
+            #     print(c)
 
             city_combinations = None
             for combination in combinations:
                 combination_flights = []
                 for plane in planes_in_city:
-                    print(plane.id)
                     # Get all passengers that go to the plane
                     passengers = []
                     for passenger, plane_id in zip(people_in_city, combination):
@@ -218,8 +221,8 @@ class State:
 
         actions = list(itertools.product(*actions))
 
-        for action in actions:
-            print(Action(action))
+        # for action in actions:
+        #     print(Action(action))
 
         # Compute final array of possible actions
         final_actions = []
@@ -308,11 +311,12 @@ def step(state, action, missed_plane_prob = 0):
     next_state.apply_action(action, missed_plane_prob)
 
     # Compute reward of this action
-    reward = 2*(next_state.happy_people() - state.happy_people())   # Add happy people increment
+    reward = 10*(next_state.happy_people() - state.happy_people())   # Add happy people increment
+    reward += (next_state.planes_where_people() - state.planes_where_people())
     reward -= 2                                                     # Penalize time
-    reward -= action.get_cost()                                     # Substract flights cost
+    reward -= 2*action.get_cost()                                     # Substract flights cost
 
     done = (next_state.happy_people() == len(next_state.people))
     if done:
-        reward += 2*next_state.happy_people()
+        reward += 10000
     return next_state, reward, done
