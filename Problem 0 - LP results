@@ -18,8 +18,7 @@ Rome -> Stockholm
 Passenger 5:
 Stockholm -> Paris -> Rome
 
-Objective func: 10.2 (if p5 counts as separate flights)
-Objective func: 10.1 (if p5 counts as one flight (st->r)) 
+Objective func: $680 (if p5 counts as separate flights)
 
-speed: 0.015625 CPU
-iterations: 188
+speed: 0.046875 CPU
+iterations: >500, breaks
