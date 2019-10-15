@@ -133,7 +133,7 @@ if __name__ == "__main__":
 
     # Fixed initialization
     # initial_state, time_steps = get_initial_state() # From data file
-    initial_state, time_steps = problem_0_4() # From data file
+    initial_state, time_steps = problem_1_1() # From data file
 
     # for _ in 
     stats, _, iterations = agent.train(initial_state, max_timesteps = time_steps,

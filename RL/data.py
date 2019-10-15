@@ -13,7 +13,7 @@ def get_initial_state():
                 Person("A", "B"),\
                 Person("A", "D"),\
                 Person("B", "C")]
-    planes = [Plane("A", 3), Plane("B", 3)]
+    planes = [Plane("A", 2), Plane("B", 3)]
     return State(cities, people, planes, city_distances), time_steps
 
 
@@ -71,6 +71,15 @@ def problem_0_4():
                 Person("5", "6")]
     planes = [Plane("2", 10)]
     time_steps = 5
+    return State(cities, people, planes), time_steps
+
+def problem_1_1():
+    cities = ["1", "2", "3", "4", "5", "6"]
+    people =   [Person("2", "1"),\
+                Person("5", "6"),\
+                Person("5", "6")]
+    planes = [Plane("3", 1), Plane("4", 2)]
+    time_steps = 2
     return State(cities, people, planes), time_steps
 
 def get_random_state(city_number, people_number, planes_number):

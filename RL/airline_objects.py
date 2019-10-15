@@ -173,6 +173,38 @@ class State:
                 happy_people += 1
         return happy_people
 
+    # Return True if combination of passengers is valid, False otherwise
+    def __valid_combination(self, combination, planes_in_city):
+        for plane in planes_in_city:
+            if combination.count(plane.id) > plane.seats:
+                return False
+        return True
+
+    # Retuns an array a such that a[i] = number of people in plane p
+    def __group_passengers(self, people_in_city, combination, plane_ids):
+        n_cities = len(self.cities)
+        groupings = {}
+
+        if sum(1 for i in combination if i != -1) == 0:
+            return ""
+
+        for plane_idx in plane_ids:
+            if plane_idx != -1:
+                groupings[plane_idx] = np.zeros(n_cities)
+
+        for passenger_idx, plane_idx in enumerate(combination):
+            if plane_idx != -1:
+                destIdx = self.cities.index(people_in_city[passenger_idx].destination)
+                groupings[plane_idx][destIdx] += 1
+
+        res_str = ""
+        for plane_idx in sorted(groupings):
+            if plane_idx != -1:
+                res_str += str(int(plane_idx))
+                for n in groupings[plane_idx]:
+                    res_str += str(int(n))
+        return res_str
+  
     def get_actions(self):
         if self.happy_people() == len(self.people):
             return []
@@ -189,11 +221,25 @@ class State:
             
             # Get all possible passengers combinations
             combinations = list(itertools.product(planes_id, repeat=len(people_in_city)))
-            # for c in combinations:
-            #     print(c)
-
+            seen_groupings = set()
             city_combinations = None
             for combination in combinations:
+                if not self.__valid_combination(combination, planes_in_city):
+                    continue
+
+                # grouping = self.__group_passengers(people_in_city, combination, planes_id)
+                # # print("##############")
+                # # for passenger in people_in_city:
+                # #     print(passenger.destination)
+                # # print(combination)
+                # # print(grouping)
+                # # print("##############")
+                
+                # if grouping in seen_groupings:
+                #     continue
+                # else:
+                #    seen_groupings.add(grouping)
+                
                 combination_flights = []
                 for plane in planes_in_city:
                     # Get all passengers that go to the plane
@@ -201,7 +247,6 @@ class State:
                     for passenger, plane_id in zip(people_in_city, combination):
                         if plane_id == plane.id:
                             passengers.append(passenger)
-
                     # Get all possible destinations
                     plane_flights = []
                     for destination in self.cities:
@@ -216,13 +261,9 @@ class State:
                     city_combinations = np.array(combination_flights)
                 else:
                     city_combinations = np.concatenate((city_combinations, np.array(combination_flights)))
-            
             actions.append(city_combinations)
 
         actions = list(itertools.product(*actions))
-
-        # for action in actions:
-        #     print(Action(action))
 
         # Compute final array of possible actions
         final_actions = []
