@@ -4,20 +4,77 @@ import itertools
 import numpy as np
 import copy
 
-cities = ["A", "B", "C", "D"]
-city_distances =   [[0, 1, 1, 1],
-                    [1, 0, 1, 1],
-                    [1, 1, 0, 1],
-                    [1, 1, 1, 0]]
 time_steps = 5
 
-
 def get_initial_state():
+    cities = ["A", "B", "C", "D"]
     people =   [Person("A", "B"),\
+                Person("A", "B"),\
                 Person("A", "B"),\
                 Person("A", "D"),\
                 Person("B", "C")]
     planes = [Plane("A", 2), Plane("B", 3)]
+    return State(cities, people, planes, city_distances), time_steps
+
+
+def problem_0_1():
+    cities = ["1", "2", "3", "4"]
+    city_distances =   [[0, 1, 1, 1],
+                        [1, 0, 1, 1],
+                        [1, 1, 0, 1],
+                        [1, 1, 1, 0]]
+    people =   [Person("1", "2"),\
+                Person("2", "3"),\
+                Person("2", "3"),\
+                Person("3", "1"),\
+                Person("3", "2")]
+    planes = [Plane("2", 10)]
+    time_steps = 4
+    return State(cities, people, planes, city_distances), time_steps
+
+def problem_0_2():
+    cities = ["1", "2", "3", "4"]
+    city_distances =   [[0, 1, 1, 1],
+                        [1, 0, 1, 1],
+                        [1, 1, 0, 1],
+                        [1, 1, 1, 0]]
+    people =   [Person("1", "2"),\
+                Person("2", "4"),\
+                Person("2", "3"),\
+                Person("3", "1"),\
+                Person("3", "2")]
+    planes = [Plane("3", 10)]
+    time_steps = 4
+    return State(cities, people, planes, city_distances), time_steps
+
+def problem_0_3():
+    cities = ["1", "2", "3", "4"]
+    city_distances =   [[0, 1, 1, 1],
+                        [1, 0, 1, 1],
+                        [1, 1, 0, 1],
+                        [1, 1, 1, 0]]
+    people =   [Person("1", "2"),\
+                Person("1", "2"),\
+                Person("1", "2")]
+    planes = [Plane("2", 10)]
+    time_steps = 4
+    return State(cities, people, planes, city_distances), time_steps
+
+def problem_0_4():
+    cities = ["1", "2", "3", "4", "5", "6"]
+    city_distances =   [[0, 1, 1, 1],
+                        [1, 0, 1, 1],
+                        [1, 1, 0, 1],
+                        [1, 1, 1, 0]]
+    people =   [Person("2", "6"),\
+                Person("4", "1"),\
+                Person("4", "2"),\
+                Person("4", "2"),\
+                Person("4", "5"),\
+                Person("5", "2"),\
+                Person("5", "6")]
+    planes = [Plane("2", 10)]
+    time_steps = 4
     return State(cities, people, planes, city_distances), time_steps
 
 def get_random_state(city_number, people_number, planes_number):

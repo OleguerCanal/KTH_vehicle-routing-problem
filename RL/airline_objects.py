@@ -118,7 +118,6 @@ class Action:
 
     def add_flights(self, flights):
         for flight in flights:
-            # print(flight)
             for f in flight:
                 self.flights.append(f)
 
@@ -158,6 +157,14 @@ class State:
 
     def city_distance(self, a, b):
         return self.city_distances[self.cities.index(a)][self.cities.index(b)]
+
+    def planes_where_people(self):
+        score = 0
+        for plane in self.planes:
+            for person in self.people:
+                if person.location == plane.location:
+                    score += 1
+        return score
 
     def happy_people(self):
         happy_people = 0
@@ -210,7 +217,6 @@ class State:
             planes_in_city = self.__get_planes_in_city(city)
             if len(planes_in_city) == 0:
                 continue
-
             people_in_city = self.__people_in_city(city)
             planes_id = [plane.id for plane in planes_in_city]
             planes_id.append(-1)  # -1 meaning they dont get on any plane
@@ -348,11 +354,12 @@ def step(state, action, missed_plane_prob = 0):
     next_state.apply_action(action, missed_plane_prob)
 
     # Compute reward of this action
-    reward = 2*(next_state.happy_people() - state.happy_people())   # Add happy people increment
+    reward = 10*(next_state.happy_people() - state.happy_people())   # Add happy people increment
+    reward += (next_state.planes_where_people() - state.planes_where_people())
     reward -= 2                                                     # Penalize time
-    reward -= action.get_cost()                                     # Substract flights cost
+    reward -= 2*action.get_cost()                                     # Substract flights cost
 
     done = (next_state.happy_people() == len(next_state.people))
     if done:
-        reward += 2*next_state.happy_people()
+        reward += 10000
     return next_state, reward, done
