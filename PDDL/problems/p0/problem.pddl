@@ -53,7 +53,6 @@
             (= (plane-time p1) 0)
 
             (= (tot-people) 5)
-            (= (tot-time) 1)
             (= (deadline) 10000)
             (= (happy-people) 0)    
             (= (tot-flights) 0)
@@ -62,9 +61,10 @@
     (:goal (or
                ;(forall (?p - plane) (deadline-reached ?p))
                ;(= (happy-people) (tot-people))
-               (= (tot-flights) 10)
+               (= (tot-flights) 4)
            )
     )
+    ;(:metric minimize (tot-flights))
     (:metric minimize (- (happy-people)))
    ; (:metric minimize (- (happy-people) (tot-flights)))
 )
