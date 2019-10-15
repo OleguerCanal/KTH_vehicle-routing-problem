@@ -2,6 +2,9 @@ import numpy as np
 import itertools
 import copy
 
+# Global constants
+PLANE_FLYING = "PLANE_FLYING"
+
 class Person:
     class_counter = 0
     def __init__(self, origin, destination):
@@ -63,11 +66,13 @@ class Plane:
         # return hash(repr(self))
 
 class Flight:
-    def __init__(self, plane, origin, destination, passengers):
+    def __init__(self, plane, origin, destination, passengers, state):
         self.plane = plane
         self.origin = origin
         self.destination = destination
         self.passengers = passengers
+        self.original_distance = state.city_distance(origin, destination)
+        self.remaining_distance = self.original_distance
     
     def has_plane(self, plane):
         return self.plane.id == plane.id
@@ -79,14 +84,13 @@ class Flight:
         return False
 
     def get_cost(self):
-        if self.origin == self.destination:
-            return 0
-        return 1 # TODO(oleguer): Return distance between cities
+        return self.original_distance # TODO(oleguer): Return distance between cities
 
     def __str__(self):
         s =  "Plane " + str(self.plane.id) + ": " + str(self.origin) + "->" + str(self.destination) + " Pass: "
         for person in self.passengers:
             s += str(person.id) + ", "
+        s += "Timesteps To Dest: " + str(self.remaining_distance)
         return s
 
     def __eq__(self, other):
@@ -138,10 +142,19 @@ class Action:
         return hash_val
 
 class State:
-    def __init__(self, cities, people, planes):
+    def __init__(self, cities, people, planes, distances=None):
         self.cities = cities
         self.planes = planes
         self.people = people
+
+        if distances == None:
+            self.city_distances = np.ones((len(cities), len(cities))) -\
+                                    np.eye((len(cities), len(cities)))
+        else:
+            self.city_distances = distances
+
+    def city_distance(self, a, b):
+        return self.city_distances[self.cities.index(a)][self.cities.index(b)]
 
     def happy_people(self):
         happy_people = 0
@@ -192,7 +205,7 @@ class State:
                         plane_flights = []
                         for destination in self.cities:
                             if (destination != city) or ((destination == city) and len(passengers) == 0):
-                                plane_flights.append(Flight(plane, city, destination, passengers))
+                                plane_flights.append(Flight(plane, city, destination, passengers, self))
                         combination_flights.append(plane_flights)
 
                 # Augment combinations
@@ -219,13 +232,22 @@ class State:
 
     def apply_action(self, action, missed_plane_prob = 0.0):
         for flight in action.flights:
-            for person in self.people:
-                if flight.has_passenger(person):
-                    if np.random.uniform() >= missed_plane_prob:
-                        person.location = flight.destination
-            for plane in self.planes:
-                if flight.has_plane(plane):
-                    plane.location = flight.destination
+            flight.remaining_distance -=1
+            if flight.remaining_distance <= 0:
+                for person in self.people:
+                    if flight.has_passenger(person):
+                        if np.random.uniform() >= missed_plane_prob:
+                            person.location = flight.destination
+                for plane in self.planes:
+                    if flight.has_plane(plane):
+                        plane.location = flight.destination
+            else:
+                for person in self.people:
+                    if flight.has_passenger(person):
+                        person.location = PLANE_FLYING
+                for plane in self.planes:
+                    if flight.has_plane(plane):
+                        plane.location = PLANE_FLYING
 
     def __people_in_city(self, city):
         people = []

@@ -45,13 +45,11 @@ class Quality():
                 best_action_indx = idx
         return best_action_indx
 
-    # def best_action(self, state):
-    #     if state not in self.Q:
-    #         print("State never seen, taking greedy action")
-    #         for action in state.get_actions():
-                
-    #         return np.random.choice()
-    #     return max(self.Q[state], key=self.Q[state].get)
+    def best_action(self, state):
+        if state not in self.Q:
+            print("State never seen, taking random action")
+            return np.random.choice(state.get_actions())
+        return max(self.Q[state], key=self.Q[state].get)
 
 class RlAgent:
     def __init__(self):
@@ -64,7 +62,7 @@ class RlAgent:
         action_idx = np.random.choice(np.arange(len(probs)), p = probs)
         return actions[action_idx]
 
-    def train(self, initial_state, max_timesteps, num_episodes, lr, discount, epsilon):
+    def train(self, initial_state, max_timesteps, num_episodes, lr, discount, epsilon, miss_flight_prob = 0):
         stats = plotting.EpisodeStats(
             episode_lengths = np.zeros(num_episodes),
             episode_rewards = np.zeros(num_episodes))
@@ -85,7 +83,7 @@ class RlAgent:
                 total_actions_num += len(actions)
                 total_actions_num_size += 1
                 action = self.__epsilon_greedy(state, epsilon, actions)  # Choose one following epsilon-greedy
-                next_state, reward, done = step(state, action)  # Take action
+                next_state, reward, done = step(state, action, miss_flight_prob)  # Take action
     
                 # Update statistics 
                 stats.episode_rewards[ith_episode] += reward
@@ -115,8 +113,6 @@ class RlAgent:
             best_action = self.Q.best_action(state)
             state, reward, done = step(state, best_action)
             print(best_action)
-            print("Reward:", reward)
-            # print(state)
             steps += 1
 
 
@@ -126,6 +122,7 @@ if __name__ == "__main__":
     # Fixed initialization
     initial_state, time_steps = get_initial_state() # From data file
     stats, _ = agent.train(initial_state, max_timesteps = time_steps,
-                num_episodes = 100, lr = 0.7, discount = 0.7, epsilon = 0.2)
-    plotting.plot_episode_stats(stats)
-    agent.solve(initial_state, max_timesteps = 10)
+                num_episodes = 1000, lr = 0.7, discount = 0.7, epsilon = 0.2,
+                miss_flight_prob = 0.)  # 20% chance of missing flight (stochasticity)
+    # plotting.plot_episode_stats(stats)
+    agent.solve(initial_state, max_timesteps = time_steps)

@@ -6,13 +6,11 @@ from matplotlib import cm
 from matplotlib.ticker import LinearLocator, FormatStrFormatter
 import numpy as np
 
-def get_branch_factor(cities, people, planes, reps = 5):
+def get_branch_factor(cities, people, planes, reps = 10):
     branch_factor = 0
     for _ in range(reps):
         initial_state, time_steps = get_random_state(cities, people, planes)
-        stats, branch_fact = agent.train(initial_state, max_timesteps = time_steps,
-                    num_episodes = 50, lr = 0.7, discount = 0.7, epsilon = 0.2)
-        branch_factor += branch_fact
+        branch_factor += len(initial_state.get_actions())
     branch_factor = branch_factor/reps
     return branch_factor
 
@@ -21,11 +19,12 @@ if __name__ == "__main__":
 
     # Random initialization
     max_cities = 5
+    
     min_people = 2
-    max_people = 9
+    max_people = 13
 
     min_planes = 1
-    max_planes = 5
+    max_planes = 7
 
     # for city in cities:
     cities = max_cities
