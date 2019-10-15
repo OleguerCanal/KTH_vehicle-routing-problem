@@ -17,7 +17,7 @@ def get_initial_state():
                 Person("A", "B"),\
                 Person("A", "D"),\
                 Person("B", "C")]
-    planes = [Plane("A", 3), Plane("B", 3)]
+    planes = [Plane("A", 2), Plane("B", 3)]
     return State(cities, people, planes, city_distances), time_steps
 
 def get_random_state(city_number, people_number, planes_number):
