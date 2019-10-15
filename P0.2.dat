@@ -1,0 +1,75 @@
+data;
+
+#1 = Paris, 2 = Rome, 3 = Stockholm, 4 = rando
+#airtime = distance/100
+#1 plane, 4 cities, 5 people
+#30 hours
+
+set TIMESLOTS := 1 2 3 4;
+set TIMESLOTS1 := 1 2 3;
+set ORIGIN := 1 2 3 4;
+set DESTINATION := 1 2 3 4;
+param Flights := 4;
+param Start := 3;
+
+
+param TICKETCOST:
+  1 2 3 4:=
+1 0 1 1 1
+2 1 0 1 1
+3 1 1 0 1
+4 1 1 1 0;
+
+param S1 :=
+1 1
+2 0 
+3 0
+4 0;
+param S2 :=
+1 0
+2 0 
+3 1
+4 0;
+param S3 :=
+1 0
+2 1
+3 0
+4 0;
+param S4 :=
+1 0
+2 1
+3 0
+4 0;
+param S5 :=
+1 0
+2 0
+3 1
+4 0;
+param E1 :=
+1 0
+2 1
+3 0
+4 0;
+param E2 := 
+1 1
+2 0
+3 0
+4 0;
+param E3 := 
+1 0
+2 0
+3 0
+4 1;
+param E4 :=
+1 0
+2 0
+3 1
+4 0;
+param E5 := 
+1 0
+2 1
+3 0
+4 0;
+
+
+end;
