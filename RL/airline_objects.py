@@ -149,9 +149,9 @@ class State:
         self.people = people
         self.ongoing_flights = []
 
-        if distances == None:
+        if distances is None:
             self.city_distances = np.ones((len(cities), len(cities))) -\
-                                    np.eye((len(cities), len(cities)))
+                                    np.eye(len(cities))
         else:
             self.city_distances = distances
 
@@ -311,12 +311,12 @@ def step(state, action, missed_plane_prob = 0):
     next_state.apply_action(action, missed_plane_prob)
 
     # Compute reward of this action
-    reward = 10*(next_state.happy_people() - state.happy_people())   # Add happy people increment
+    reward = 3*(next_state.happy_people() - state.happy_people())   # Add happy people increment
     reward += (next_state.planes_where_people() - state.planes_where_people())
     reward -= 2                                                     # Penalize time
     reward -= 2*action.get_cost()                                     # Substract flights cost
 
     done = (next_state.happy_people() == len(next_state.people))
     if done:
-        reward += 10000
+        reward += 100
     return next_state, reward, done

@@ -5,6 +5,8 @@ import matplotlib.pyplot as plt
 from matplotlib import cm
 from matplotlib.ticker import LinearLocator, FormatStrFormatter
 import numpy as np
+import pickle
+
 
 def get_branch_factor(cities, people, planes, reps = 10):
     branch_factor = 0
@@ -14,29 +16,7 @@ def get_branch_factor(cities, people, planes, reps = 10):
     branch_factor = branch_factor/reps
     return branch_factor
 
-if __name__ == "__main__":
-    agent = RlAgent()
-
-    # Random initialization
-    max_cities = 5
-    
-    min_people = 2
-    max_people = 13
-
-    min_planes = 1
-    max_planes = 7
-
-    # for city in cities:
-    cities = max_cities
-    X = np.arange(min_people, max_people, 2)
-    Y = np.arange(min_planes, max_planes, 1)
-    X, Y = np.meshgrid(X, Y)
-    Z = np.zeros(X.shape)
-    # a = raw_input()
-    for i, people in enumerate(range(min_people, max_people, 2)):
-        for j, planes in enumerate(range(min_planes, max_planes, 1)):
-            Z[j][i] = get_branch_factor(cities, people, planes)
-
+def plot(X, Y, Z):
     fig = plt.figure()
     ax = fig.gca(projection='3d')
     # Plot the surface.
@@ -52,3 +32,42 @@ if __name__ == "__main__":
     fig.colorbar(surf, shrink=0.5, aspect=5)
 
     plt.show()
+
+
+if __name__ == "__main__":
+    # agent = RlAgent()
+
+    # # Random initialization
+    # max_cities = 5
+    
+    # min_people = 2
+    # max_people = 13
+
+    # min_planes = 1
+    # max_planes = 7
+
+    # # for city in cities:
+    # cities = max_cities
+    # X = np.arange(min_people, max_people, 2)
+    # Y = np.arange(min_planes, max_planes, 1)
+    # X, Y = np.meshgrid(X, Y)
+    # Z = np.zeros(X.shape)
+    # # a = raw_input()
+    # for i, people in enumerate(range(min_people, max_people, 2)):
+    #     for j, planes in enumerate(range(min_planes, max_planes, 1)):
+    #         Z[j][i] = get_branch_factor(cities, people, planes)
+    #         A = np.array([X, Y, Z])
+    #         np.save("branching.npy", A)
+
+    # plot(X, Y, Z)
+
+    loaded = np.load("branching.npy")
+    print(loaded)
+    print(loaded[-1][-3])
+    print(loaded[-1][-2])
+    print(loaded[-1][-1][-2])
+    loaded[-1][-1][-2] = 26.56715674565e5
+    plot(loaded[0,:, :], loaded[1, :, :], loaded[2, :, :])
+
+
+    

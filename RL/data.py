@@ -62,10 +62,6 @@ def problem_0_3():
 
 def problem_0_4():
     cities = ["1", "2", "3", "4", "5", "6"]
-    city_distances =   [[0, 1, 1, 1],
-                        [1, 0, 1, 1],
-                        [1, 1, 0, 1],
-                        [1, 1, 1, 0]]
     people =   [Person("2", "6"),\
                 Person("4", "1"),\
                 Person("4", "2"),\
@@ -74,11 +70,13 @@ def problem_0_4():
                 Person("5", "2"),\
                 Person("5", "6")]
     planes = [Plane("2", 10)]
-    time_steps = 4
-    return State(cities, people, planes, city_distances), time_steps
+    time_steps = 5
+    return State(cities, people, planes), time_steps
 
 def get_random_state(city_number, people_number, planes_number):
     random_cities = range(city_number)
+    # city_distances = np.ones((city_number, city_number)) - np.eye(city_number)
+    # print(city_distances)
     people = []
     for i in range(people_number):
         people.append(Person(np.random.choice(random_cities), np.random.choice(random_cities)))
@@ -87,7 +85,7 @@ def get_random_state(city_number, people_number, planes_number):
     for i in range(planes_number):
         planes.append(Plane(np.random.choice(random_cities), 2))
 
-    return State(random_cities, people, planes, city_distances), time_steps
+    return State(random_cities, people, planes), time_steps
     
 
 if __name__ == "__main__":
