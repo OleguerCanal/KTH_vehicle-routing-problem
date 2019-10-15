@@ -61,7 +61,7 @@
     (:goal (or
                ;(forall (?p - plane) (deadline-reached ?p))
                ;(= (happy-people) (tot-people))
-               (= (tot-flights) 4)
+               (= (tot-flights) 5)
            )
     )
     ;(:metric minimize (tot-flights))
