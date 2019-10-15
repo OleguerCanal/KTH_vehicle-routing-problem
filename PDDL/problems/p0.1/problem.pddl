@@ -2,7 +2,7 @@
     (:domain airline)
     (:objects A B C D - city
               g1 g2 g3 g4 g5 - group
-              p1 p2 - plane)
+              p1 - plane)
     (:init
             ; Cities
             (= (city-distance A B) 1)
@@ -25,7 +25,7 @@
 
             (= (group-number g2) 1)
             (group-at g2 B)
-            (group-want g2 C)
+            (group-want g2 D)
 
             (= (group-number g3) 1)
             (group-at g3 B)
@@ -40,12 +40,8 @@
             (group-want g5 B)
 
             ; Planes
-            (plane-at p1 B)
+            (plane-at p1 C)
             (= (plane-seats p1) 1000)
-
-            ; Planes
-            (plane-at p2 A)
-            (= (plane-seats p2) 1000)
 
             ; Starting Conditions
             (= (group-time g1) 0)
@@ -54,21 +50,17 @@
             (= (group-time g4) 0)
             (= (group-time g5) 0)
             (= (plane-onboard p1) 0)
-            (= (plane-onboard p2) 0)
             (= (plane-time p1) 0)
-            (= (plane-time p2) 0)
 
             (= (tot-people) 5)
-            (= (deadline) 4)
-            (= (happy-people) 0)    
+            (= (deadline) 100000)
+            (= (happy-people) 0)
             (= (tot-flights) 0)
+            (= (obj) 1)
+            (= (one) 1)
         )
 
-    (:goal (or
-               ;(forall (?p - plane) (deadline-reached ?p))
-               (= (happy-people) (tot-people))
-               ;(= (tot-flights) 4)
-           )
+    (:goal (= (happy-people) (tot-people))
     )
     (:metric minimize (tot-flights))
 )
