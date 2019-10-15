@@ -5,11 +5,11 @@ import numpy as np
 import copy
 
 cities = ["A", "B", "C", "D"]
-city_distances =   [[0, 3, 1, 1],
+city_distances =   [[0, 1, 1, 1],
                     [1, 0, 1, 1],
                     [1, 1, 0, 1],
                     [1, 1, 1, 0]]
-time_steps = 4
+time_steps = 5
 
 
 def get_initial_state():
@@ -34,4 +34,16 @@ def get_random_state(city_number, people_number, planes_number):
     
 
 if __name__ == "__main__":
-    pass
+    state, steps = get_initial_state()
+    print(state)
+    actions = state.get_actions()
+    print(actions[4])
+    state.apply_action(actions[4])
+    print(state)
+    # state.get_actions()
+    for action in state.get_actions():
+        print(action)
+    # action = state.get_actions()[0]
+    # print(action)
+    # state.apply_action(action)
+    # print(state)
