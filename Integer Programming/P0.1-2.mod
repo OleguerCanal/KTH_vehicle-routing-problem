@@ -1,4 +1,4 @@
-set TIMESLOTS; #time
+set TIMESLOTS; 
 set TIMESLOTS1;
 set ORIGIN;
 set DESTINATION;
@@ -32,10 +32,10 @@ maximize profit: #number of filled seats*flytime*if flight occured
 s.t. origin {j in DESTINATION, t in TIMESLOTS1}: #next flight must leave from previous destinations
 	sum {i in ORIGIN} x[i,j,t]*sum{s in ORIGIN,k in DESTINATION} x[s,k,t+1] - sum {k in DESTINATION} x[j,k,t+1] = 0;
 
-s.t. oneflight {t in TIMESLOTS}:
+s.t. oneflight {t in TIMESLOTS}: #one flight at a time
 	sum {i in ORIGIN, j in DESTINATION} x[i,j,t] <= 1;
 
-s.t. correctstart1:
+s.t. correctstart1: #starts at origin
 	sum {i in ORIGIN, j in DESTINATION, t in TIMESLOTS} S1[i]*m1[i,j,t] = sum {i in ORIGIN, j in DESTINATION, t in TIMESLOTS} m1[i,j,t];
 s.t. correctstart2:
 	sum {i in ORIGIN, j in DESTINATION, t in TIMESLOTS} S2[i]*m2[i,j,t] = sum {i in ORIGIN, j in DESTINATION, t in TIMESLOTS} m2[i,j,t];
@@ -46,7 +46,7 @@ s.t. correctstart4:
 s.t. correctstart5:
 	sum {i in ORIGIN, j in DESTINATION, t in TIMESLOTS} S5[i]*m5[i,j,t] = sum {i in ORIGIN, j in DESTINATION, t in TIMESLOTS} m4[i,j,t];
 		
-s.t. stop1:
+s.t. stop1: #stops after reaching destination
 	if (sum {i in ORIGIN, j in DESTINATION, t in TIMESLOTS1} m1[i,j,t]*E1[j] = 1) then sum {i in ORIGIN, j in DESTINATION, t in TIMESLOTS1} m1[i,j,t+1] = 0;
 s.t. stop2:
 	if (sum {i in ORIGIN, j in DESTINATION, t in TIMESLOTS1} m2[i,j,t]*E2[j] = 1) then sum {i in ORIGIN, j in DESTINATION, t in TIMESLOTS1} m2[i,j,t+1] = 0;
@@ -57,13 +57,13 @@ s.t. stop4:
 s.t. stop5:
 	if (sum {i in ORIGIN, j in DESTINATION, t in TIMESLOTS1} m5[i,j,t]*E5[j] = 1) then sum {i in ORIGIN, j in DESTINATION, t in TIMESLOTS1} m5[i,j,t+1] = 0;
 
-s.t. avoidlocalopt {t in 1..Flights}:
+s.t. avoidlocalopt {t in 1..Flights}: #try to avoid local opt
 	sum {i in ORIGIN, j in DESTINATION} x[i,j,t]>= 1;
 
-s.t. setstart:
+s.t. setstart: #set start
 	sum {j in DESTINATION} x[Start,j,1] = 1;
 		
-s.t. xvar1 {t in TIMESLOTS, i in ORIGIN, j in DESTINATION}:
+s.t. xvar1 {t in TIMESLOTS, i in ORIGIN, j in DESTINATION}: #people cannot move without plane
 	m1[i,j,t]*x[i,j,t] = m1[i,j,t];
 s.t. xvar2 {t in TIMESLOTS, i in ORIGIN, j in DESTINATION}:
 	m2[i,j,t]*x[i,j,t] = m2[i,j,t];
