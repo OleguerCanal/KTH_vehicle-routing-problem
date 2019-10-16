@@ -24,23 +24,15 @@
             (group-want g1 B)
 
             (= (group-number g2) 1)
-            (group-at g2 B)
-            (group-want g2 D)
+            (group-at g2 A)
+            (group-want g2 B)
 
             (= (group-number g3) 1)
-            (group-at g3 B)
-            (group-want g3 C)
-
-            (= (group-number g4) 1)
-            (group-at g4 C)
-            (group-want g4 A)
-
-            (= (group-number g5) 1)
-            (group-at g5 C)
-            (group-want g5 B)
+            (group-at g3 A)
+            (group-want g3 B)
 
             ; Planes
-            (plane-at p1 C)
+            (plane-at p1 B)
             (= (plane-seats p1) 1000)
 
             ; Starting Conditions
@@ -52,7 +44,7 @@
             (= (plane-onboard p1) 0)
             (= (plane-time p1) 0)
 
-            (= (tot-people) 5)
+            (= (tot-people) 3)
             (= (deadline) 100000)
             (= (happy-people) 0)
             (= (tot-flights) 0)

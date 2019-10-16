@@ -25,7 +25,7 @@
 
             (= (group-number g2) 1)
             (group-at g2 B)
-            (group-want g2 D)
+            (group-want g2 C)
 
             (= (group-number g3) 1)
             (group-at g3 B)
@@ -40,7 +40,7 @@
             (group-want g5 B)
 
             ; Planes
-            (plane-at p1 C)
+            (plane-at p1 B)
             (= (plane-seats p1) 1000)
 
             ; Starting Conditions
