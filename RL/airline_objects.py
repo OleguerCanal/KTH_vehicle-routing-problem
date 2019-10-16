@@ -159,11 +159,15 @@ class State:
         return self.city_distances[self.cities.index(a)][self.cities.index(b)]
 
     def planes_where_people(self):
+        people = copy.deepcopy(self.people)
         score = 0
         for plane in self.planes:
-            for person in self.people:
-                if person.location == plane.location:
-                    score += 1
+            plane_score = 0
+            for person in people:
+                if person.location == plane.location and not person.is_happy():
+                    plane_score += 1
+                    people.remove(person)  # Dont count same person twice
+            score += min(plane_score, plane.seats)
         return score
 
     def happy_people(self):
@@ -352,12 +356,12 @@ def step(state, action, missed_plane_prob = 0):
     next_state.apply_action(action, missed_plane_prob)
 
     # Compute reward of this action
-    reward = 3*(next_state.happy_people() - state.happy_people())   # Add happy people increment
-    reward += (next_state.planes_where_people() - state.planes_where_people())
-    reward -= 2                                                     # Penalize time
-    reward -= 2*action.get_cost()                                     # Substract flights cost
+    reward = 10*(next_state.happy_people() - state.happy_people())   # Add happy people increment
+    reward += 0*(next_state.planes_where_people() - state.planes_where_people())
+    reward -= 1                                                  # Penalize time
+    reward -= action.get_cost()                                     # Substract flights cost
 
     done = (next_state.happy_people() == len(next_state.people))
     if done:
-        reward += 100
+        reward += 1000
     return next_state, reward, done

@@ -121,11 +121,11 @@ class RlAgent:
             total_cost += best_action.get_cost()
             steps += 1
         
-        score = state.happy_people() - initial_state.happy_people()
-        print("Happy pople:", score)
-        score -= total_cost
+        happy_people = state.happy_people() - initial_state.happy_people()
+        print("Happy pople:", happy_people)
         print("Total cost:", total_cost)
-        return score
+        score = happy_people - total_cost
+        return score, happy_people, total_cost
 
 
 if __name__ == "__main__":
@@ -133,13 +133,13 @@ if __name__ == "__main__":
 
     # Fixed initialization
     # initial_state, time_steps = get_initial_state() # From data file
-    initial_state, time_steps = problem_1_1() # From data file
+    initial_state, time_steps = problem_0_1() # From data file
 
     # for _ in 
     stats, _, iterations = agent.train(initial_state, max_timesteps = time_steps,
-                num_episodes = 100, lr = 0.6, discount = 0.7, epsilon = 0.6,
-                miss_flight_prob = 0.)  # 20% chance of missing flight (stochasticity)
+                num_episodes = 100, lr = 0.7, discount = 0.8, epsilon = 0.25,
+                miss_flight_prob = 0.5)  # 20% chance of missing flight (stochasticity)
     # plotting.plot_episode_stats(stats)
-    score = agent.solve(initial_state, max_timesteps = time_steps)
+    score, _, _ = agent.solve(initial_state, max_timesteps = time_steps)
     print("score:", score)
     print("iterations:", iterations)
