@@ -20,13 +20,18 @@ def plot(X, Y, Z):
     fig = plt.figure()
     ax = fig.gca(projection='3d')
     # Plot the surface.
-    surf = ax.plot_surface(X, Y, Z, cmap=cm.coolwarm,
+    Z = Z/1e6
+    surf = ax.plot_surface(X[0:, 0:-1], Y[0:, 0:-1], Z[0:, 0:-1], cmap=cm.coolwarm,
                         linewidth=0, antialiased=False)
 
     # Customize the z axis.
     ax.set_zlim(0, np.max(Z))
     ax.zaxis.set_major_locator(LinearLocator(10))
-    ax.zaxis.set_major_formatter(FormatStrFormatter('%.02f'))
+    ax.zaxis.set_major_formatter(FormatStrFormatter('%.1f'))
+
+    ax.set_xlabel('People')
+    ax.set_ylabel('Planes')
+    ax.set_zlabel('branching_factor / 1e6')
 
     # Add a color bar which maps values to colors.
     fig.colorbar(surf, shrink=0.5, aspect=5)
@@ -62,12 +67,8 @@ if __name__ == "__main__":
     # plot(X, Y, Z)
 
     loaded = np.load("branching.npy")
-    print(loaded)
-    print(loaded[-1][-3])
-    print(loaded[-1][-2])
-    print(loaded[-1][-1][-2])
-    loaded[-1][-1][-2] = 26.56715674565e5
     plot(loaded[0,:, :], loaded[1, :, :], loaded[2, :, :])
 
+    
 
     
