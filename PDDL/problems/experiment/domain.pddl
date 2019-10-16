@@ -27,6 +27,10 @@
                 ; Global
                 (max-time)
                 (total-distance)
+                (obj)
+                (zero)
+                (one)
+                (deadline)
                 (happy-people)
     )
 
@@ -67,7 +71,8 @@
                                 (group-just-unboarded ?g ?p)
                                 (not (group-in-plane ?g ?p))
                                 (when (group-want ?g ?x)
-                                    (increase (happy-people) (group-number ?g)))
+                                    (increase (happy-people) (group-number ?g))
+                                )
                                 (assign (group-time ?g) (plane-time ?p))
                             )
     )    
